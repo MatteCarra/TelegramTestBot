@@ -1,0 +1,19 @@
+{
+  "name": "telegramscuolabot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.311.0",
+    "express": "^4.16.3",
+    "node-fetch": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0"
+  }
+}
