@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 
 app.post('/', function (req, res) {
   const { message, callback_query } = req.body;
-  console.log(req.body)
+  console.log(JSON.stringify(req.body))
   if(message) {
     const { message_id, from, chat, date, text, new_chat_member } = message;
 
@@ -32,7 +32,8 @@ app.post('/', function (req, res) {
       console.log(req.body)
     }
   } else if(callback_query) {
-    sendMessage("Hey, nice pick!")
+    const { from, message, data } = callback_query;
+    sendMessage(message.chat.id, "Hey, nice pick!")
   } else {
     console.log(req.body)
   }
