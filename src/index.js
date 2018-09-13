@@ -4,14 +4,15 @@ const { aws } = require('../credentials.json');
 const dynamodb = new AWS.DynamoDB(aws);
 const app = express();
 const TelegramApi = require("./TelegramApi.js");
+const bodyParser = require('body-parser')
 
 // respond with "hello world" when a GET request is made to the homepage
 app.post('/', function (req, res) {
-  console.log(JSON.stringify(req.body))
+  console.log(req.body)
   res.send('hello world')
 });
 
-app.use(express.json())
+app.use(bodyParser.json())
 
 app.listen(9000, () => console.log('Example app listening on port 9000!'))
 
