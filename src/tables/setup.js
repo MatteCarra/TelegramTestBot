@@ -1,9 +1,11 @@
 const e = module.exports = {};
 
 const { createOrario } = require('./orario.js')
+const { updateClasse } = require('./classe.js')
+const { sendMessage } = require('../TelegramApi.js')
 
 //TODo check if that's the only checkout for that class
-const initSetup = e.initSetup = (classe, user_id, tipo, key1, key2, passaggio = 0) => {
+const initSetup = e.initSetup = (classe, user_id, tipo, parameters, passaggio = 0) => {
   return dynamodb.putItem({
     Item: {
       TableName: "calendario",
@@ -17,11 +19,8 @@ const initSetup = e.initSetup = (classe, user_id, tipo, key1, key2, passaggio = 
       "tipo": {
         N: tipo
       },
-      "key1": {
-        M: key1
-      },
-      "key2": {
-        M: key2
+      "parameters": {
+        M: parameters
       },
       "passaggio": {
         N: passaggio
@@ -30,11 +29,11 @@ const initSetup = e.initSetup = (classe, user_id, tipo, key1, key2, passaggio = 
   }).promise()
 }
 
-const updateSetup = e.updateSetup = (classe, key1New = null, key2New = null) => {
+const updateSetup = e.updateSetup = (classe, parametersNew = {}) => {
   return getSetup(classe)
     .then(({ Item }) => {
-      const { tipo, user_id, key1, key2, passaggio } = Item;
-      return initSetup(classe, user_id, tipo.N, key1New || key1.M, key2New || key2.M, passaggio.N+1)
+      const { tipo, user_id, parameters, passaggio } = Item;
+      return initSetup(classe, user_id, tipo.N, { ...parametersNew, ...parameters.M }, passaggio.N+1)
     })
 }
 
@@ -54,10 +53,14 @@ const getSetup = e.getSetup = (classe) => {
 //1 = calendario
 //3 = orario
 //4 = interrogazione
-const handleSetup = e.handleSetup = (classe, message, setup) => {
+const handleSetup = e.handleSetup = (classe, user_id, message, setup) => {
+  if(user_id !== setup.user_id) {
+    return sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")
+  }
+
   switch (setup.tipo.N) {
     case 0: //classe
-
+      handleSchoolSetup(classe, message, setup)
       break;
     case 1: //calendario
 
@@ -88,12 +91,22 @@ const handleOrarioSetup = (classe, event, setup) => {
   }
 }
 
-const handleSchoolSetup = e.handleSchoolSetup = (event, setup) => {
-  const { key1, passaggio } = setup;
+const handleSchoolSetup = e.handleSchoolSetup = (classe, event, setup) => {
+  const { parameters, passaggio } = setup;
   switch (passaggio) {
     case 0:
-      updateClasse(key1.M.id.N, null, null, event.message) //TODO
-      //TODO end setup
-      break;
+      return updateSetup(classe, { tipo: convertClassTypeToInt(event)})
+    case 1:
+      return updateSetup(classe, { anno: parseInt(event.charAt(event.length - 1), 10)})
+    case 2:
+      return createClasse(classe, parameters.anno, 'TODO', parameters.tipo)
+  }
+}
+
+const convertClassTypeToInt = (sType) => {
+  switch (sType) {
+    case "elementari": return 0;
+    case "medie": return 1;
+    case "superiori": return 2;
   }
 }
