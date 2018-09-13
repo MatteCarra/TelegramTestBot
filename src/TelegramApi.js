@@ -20,5 +20,5 @@ const getUrl = e.getUrl = method => `https://api.telegram.org/bot${token}/${meth
 e.deleteWebhook = () => callTelegramApi('deleteWebhook');
 e.setWebhook = (webhook) => callTelegramApi('setWebhook', { url: webhook });
 e.getWebhookInfo = () => callTelegramApiGet('getWebhookInfo');
-e.sendMessage = (chat_id, text) => callTelegramApi('sendMessage', { chat_id, text });
+e.sendMessage = (chat_id, text, custom = {}) => callTelegramApi('sendMessage', { chat_id, text, ...custom });
 e.sendPhoto = (chat_id, photo) => callTelegramApi('sendPhoto', { chat_id, photo });
