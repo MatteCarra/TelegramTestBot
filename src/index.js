@@ -4,9 +4,10 @@ const { aws, telegram: { id: myId } } = require('../credentials.json');
 const app = express();
 const { sendMessage } = require("./TelegramApi.js");
 const { getSetup } = require('./tables/setup.js');
+const bodyParser = require('body-parser');
 
 // respond with "hello world" when a GET request is made to the homepage
-app.use(express.json())
+app.use(bodyParser.json())
 
 app.post('/', function (req, res) {
   const { message, callback_query } = req.body;
