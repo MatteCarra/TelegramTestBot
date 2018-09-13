@@ -1,7 +1,9 @@
 const express = require('express');
 const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB();
+const { aws } = require('../credentials.json');
+const dynamodb = new AWS.DynamoDB(aws);
 const app = express();
+const TelegramApi = require("./TelegramApi.js");
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get('/', function (req, res) {
@@ -9,7 +11,13 @@ app.get('/', function (req, res) {
     res.send('hello world')
 });
 
-app.listen(9000, () => console.log('Example app listening on port 3000!'))
+app.post('/', function (req, res) {
+  console.log(req)
+  res.send('hello world')
+});
+
+app.listen(9000, () => console.log('Example app listening on port 9000!'))
+
 
 const handleSchoolSetup = (event, setup) => {
   const { key1, passaggio } = setup;
