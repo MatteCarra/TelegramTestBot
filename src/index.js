@@ -17,7 +17,7 @@ app.post('/', function (req, res) {
     if(new_chat_member) {
       const { id, first_name } = new_chat_member;
       if(id === myId) {
-        sendMessage(chat.id, "Buongiorno, sono ScuolaBot!\r\nSpero di aiutarvi a superare al meglio l'anno scolastico, ricordandovi gli impegni scolastici e aiutandovi a fissare le interrogazioni programmate!\r\nPer iniziare mi servono un paio di informazioni.", { reply_markup: { inline_keyboard: [{ text: "Test"}]}})
+        sendMessage(chat.id, "Buongiorno, sono ScuolaBot!\r\nSpero di aiutarvi a superare al meglio l'anno scolastico, ricordandovi gli impegni scolastici e aiutandovi a fissare le interrogazioni programmate!\r\nPer iniziare mi servono un paio di informazioni.", { reply_markup: { inline_keyboard: [[{ text: "1°", "callback_data": "1"}, { text: "2°", "callback_data": "2"}]]}})
       } else {
         sendMessage(chat.id, `Benvenuto/a nella classe ${first_name}!`)
       }
