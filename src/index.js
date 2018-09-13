@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 
 app.post('/', function (req, res) {
   const { message, callback_query } = req.body;
+  console.log(req.body)
   if(message) {
     const { message_id, from, chat, date, text, new_chat_member } = message;
 
