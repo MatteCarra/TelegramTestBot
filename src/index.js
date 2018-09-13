@@ -7,9 +7,11 @@ const TelegramApi = require("./TelegramApi.js");
 
 // respond with "hello world" when a GET request is made to the homepage
 app.post('/', function (req, res) {
-  console.log(JSON.stringify(req))
+  console.log(JSON.stringify(req.body))
   res.send('hello world')
 });
+
+app.use(express.json())
 
 app.listen(9000, () => console.log('Example app listening on port 9000!'))
 
