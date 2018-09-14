@@ -31,7 +31,7 @@ app.post('/', function (req, res) {
     if(new_chat_member) {
       const { id, first_name } = new_chat_member;
       if(id === myId) {
-        initSetup(chat.id, from.id, 0, { id: { N: chat.id } })
+        initSetup(chat.id, from.id, 0, { id: { N: chat.id.toString() } })
           .then(() =>
             sendMessage(
               chat.id,
@@ -108,16 +108,16 @@ const handleSetup = (classe, user_id, message, setup) => {
   }
 
   switch (setup.tipo.N) {
-    case 0: //classe
+    case "0": //classe
       handleSchoolSetup(classe, message, setup)
       break;
-    case 1: //calendario
+    case "1": //calendario
 
       break;
-    case 2: //orario
+    case "2": //orario
       handleOrarioSetup(classe, message, setup)
       break;
-    case 3: //interrogazione
+    case "3": //interrogazione
 
       break;
   }
