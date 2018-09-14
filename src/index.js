@@ -9,6 +9,18 @@ const bodyParser = require('body-parser');
 // respond with "hello world" when a GET request is made to the homepage
 app.use(bodyParser.json())
 
+const keyboard = [
+  [
+    { text: 'Q' }, { text: 'W' }, { text: 'E' }, { text: 'R' }, { text: 'T' }, { text: 'Y' }, { text: 'U' }, { text: 'I' }, { text: 'O' }, { text: 'P' }
+  ],
+  [
+    { text: 'A' }, { text: 'S' }, { text: 'D' }, { text: 'F' }, { text: 'G' }, { text: 'H' }, { text: 'J' }, { text: 'K' }, { text: 'L' }
+  ],
+  [
+    { text: 'Z' }, { text: 'X' }, { text: 'C' }, { text: 'V' }, { text: 'B' }, { text: 'N' }, { text: 'M' }
+  ]
+]
+
 app.post('/', function (req, res) {
   const { message, callback_query } = req.body;
   console.log(JSON.stringify(req.body))
@@ -38,7 +50,7 @@ app.post('/', function (req, res) {
       console.log(req.body)
     }
   } else if(callback_query) {
-    const { from, message, data } = callback_query;
+    handleCallbackQuery(callback_query)
     sendMessage(message.chat.id, "Hey, nice pick!")
   } else {
     console.log(req.body)
@@ -48,7 +60,7 @@ app.post('/', function (req, res) {
 });
 
 
-const handleCallbackQuery = (from, message, data) => {
+const handleCallbackQuery = ({from, message, data}) => {
   const { chat: { id } } = message;
   switch (data) {
     case "elementari":
@@ -65,7 +77,7 @@ const handleCallbackQuery = (from, message, data) => {
     case "classe_anno_5":
       getSetup(id)
         .then(setup => handleSetup(id, from.id, data, setup))
-        .then(() => )
+        .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
       break;
   }
 }
