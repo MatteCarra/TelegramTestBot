@@ -13,7 +13,7 @@ module.exports = (dynamodb) => {
       ReturnConsumedCapacity: "NONE",
       Item: {
         "classe": {
-          S: classe
+          N: classe
         },
         "user_id": {
           N: user_id
