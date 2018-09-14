@@ -1,9 +1,10 @@
 const express = require('express');
 const AWS = require('aws-sdk');
 const { aws, telegram: { id: myId } } = require('../credentials.json');
+const dynamodb = new AWS.DynamoDB(aws);
 const app = express();
 const { sendMessage } = require("./TelegramApi.js");
-const { getSetup, initSetup, handleSetup } = require('./tables/setup.js');
+const { getSetup, initSetup } = require('./tables/setup.js')(dynamodb);
 const bodyParser = require('body-parser');
 
 // respond with "hello world" when a GET request is made to the homepage
@@ -100,6 +101,64 @@ const pickClassYear = (chat_id, options = 5) =>
     "Che anno frequentate?",
     { reply_markup: { inline_keyboard: fillYearsArray(options)}}
   )
+
+const handleSetup = (classe, user_id, message, setup) => {
+  if(user_id !== setup.user_id) {
+    return sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")
+  }
+
+  switch (setup.tipo.N) {
+    case 0: //classe
+      handleSchoolSetup(classe, message, setup)
+      break;
+    case 1: //calendario
+
+      break;
+    case 2: //orario
+      handleOrarioSetup(classe, message, setup)
+      break;
+    case 3: //interrogazione
+
+      break;
+  }
+}
+
+const handleOrarioSetup = (classe, event, setup) => {
+  const { key1, key2, passaggio } = setup
+  switch (passaggio) {
+    case 0: //viene mandato il giorno
+      updateSetup(classe. null, { "giorno" : { N: event.text } })
+      break;
+    case 1: //ora
+      createOrario(classe, key2.M.ora.S, event.text)
+      updateSetup(classe, null, { "giorno-ora" : { S: `${key2}-${event.text}` } })
+      break;
+    case 2:
+      updateOrario(classe, null, null, event.text)
+      //TODO elimina
+      break;
+  }
+}
+
+const handleSchoolSetup = (classe, event, setup) => {
+  const { parameters, passaggio } = setup;
+  switch (passaggio) {
+    case 0:
+      return updateSetup(classe, { tipo: convertClassTypeToInt(event)})
+    case 1:
+      return updateSetup(classe, { anno: parseInt(event.charAt(event.length - 1), 10)})
+    case 2:
+      return createClasse(classe, parameters.anno, 'TODO', parameters.tipo)
+  }
+}
+
+const convertClassTypeToInt = (sType) => {
+  switch (sType) {
+    case "elementari": return 0;
+    case "medie": return 1;
+    case "superiori": return 2;
+  }
+}
 
 
 const handleMessage = ({ text, chat, from }) => {
