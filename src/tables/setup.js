@@ -13,19 +13,19 @@ module.exports = (dynamodb) => {
       ReturnConsumedCapacity: "NONE",
       Item: {
         "classe": {
-          N: classe
+          N: classe.toString()
         },
         "user_id": {
-          N: user_id
+          N: user_id.toString()
         },
         "tipo": {
-          N: tipo
+          N: tipo.toString()
         },
         "parameters": {
           M: parameters
         },
         "passaggio": {
-          N: passaggio
+          N: passaggio.toString()
         }
       }
     }).promise()
