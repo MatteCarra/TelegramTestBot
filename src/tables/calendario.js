@@ -3,9 +3,9 @@ module.exports = = (dynamoDb) => {
 
   const addElementToCalendario = e.addElementToCalendario = (group_id, date, message, type) => {
     return dynamodb.putItem({
+      TableName: "calendario",
+      ReturnConsumedCapacity: "NONE",
       Item: {
-        TableName: "calendario",
-        ReturnConsumedCapacity: "NONE",
         "id": {
           N: group_id
         },

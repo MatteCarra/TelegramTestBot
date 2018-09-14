@@ -3,9 +3,9 @@ module.exports = (dynamodb) => {
 
   const createOrario = e.createOrario = (classe, giorno, ora, materia = null) => {
     return dynamodb.putItem({
+      TableName: "orario",
+      ReturnConsumedCapacity: "NONE",
       Item: {
-        TableName: "orario",
-        ReturnConsumedCapacity: "NONE",
         "classe": {
           S: classe
         },

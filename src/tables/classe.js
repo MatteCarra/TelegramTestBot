@@ -3,9 +3,9 @@ module.exports = (dynamodb) => {
 
   const createClasse = e.createClasse = (group_id, anno, sezione, tipo) => {
     return dynamodb.putItem({
+      TableName: "classe",
+      ReturnConsumedCapacity: "NONE",
       Item: {
-        TableName: "classe",
-        ReturnConsumedCapacity: "NONE",
         "id": {
           N: group_id
         },
