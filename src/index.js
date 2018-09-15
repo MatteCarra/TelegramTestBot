@@ -143,6 +143,7 @@ const handleOrarioSetup = (classe, event, setup) => {
 
 const handleSchoolSetup = (classe, event, setup) => {
   const { parameters, passaggio } = setup;
+  console.log("passaggio: "+ passaggio.N)
   switch (passaggio.N) {
     case "0":
       return updateSetup(classe, { tipo: convertClassTypeToInt(event)})

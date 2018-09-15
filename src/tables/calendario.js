@@ -7,16 +7,16 @@ module.exports = = (dynamoDb) => {
       ReturnConsumedCapacity: "NONE",
       Item: {
         "id": {
-          N: group_id
+          N: group_id.toString()
         },
         "data": {
-          N: date
+          N: date.toString()
         },
         "testo": {
           S: message
         },
         "tipo": {
-          N: type
+          N: type.toString()
         }
       }
     }).promise()

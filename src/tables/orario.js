@@ -7,16 +7,16 @@ module.exports = (dynamodb) => {
       ReturnConsumedCapacity: "NONE",
       Item: {
         "classe": {
-          S: classe
+          N: classe.toString()
         },
         "giorno-ora": {
           S: `${giorno}-${ora}`
         },
         "giorno": {
-          N: giorno
+          N: giorno.toString()
         },
         "ora": {
-          N: ora
+          N: ora.toString()
         },
         "materia": {
           S: materia
@@ -38,7 +38,7 @@ module.exports = (dynamodb) => {
       TableName: "classe",
       Key: {
         "id": {
-          S: classe
+          N: classe
         }
       }
     }).promise()
