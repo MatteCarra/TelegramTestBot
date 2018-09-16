@@ -105,7 +105,7 @@ const pickClassYear = (chat_id, options = 5) =>
   )
 
 const handleSetup = (classe, user_id, message, setup) => {
-  if(user_id !== setup.Item.user_id.N) {
+  if(user_id.toString() !== setup.Item.user_id.N) {
     console.log(`${user_id} != ${JSON.stringify(setup.Item.user_id.N)}`)
     return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
   }
@@ -127,14 +127,14 @@ const handleSetup = (classe, user_id, message, setup) => {
 }
 
 const handleOrarioSetup = (classe, event, setup) => {
-  const { key1, key2, passaggio } = setup
+  const { Item: { parameters, passaggio } } = setup
   switch (passaggio) {
     case "0": //viene mandato il giorno
       updateSetup(classe. null, { "giorno" : { N: event.text } })
       break;
     case "1": //ora
       createOrario(classe, key2.M.ora.S, event.text)
-      updateSetup(classe, null, { "giorno-ora" : { S: `${key2}-${event.text}` } })
+      updateSetup(classe, null, { "giorno-ora" : { S: `${parameters.giorno.N}-${event.text}` } })
       break;
     case "2":
       updateOrario(classe, null, null, event.text)
