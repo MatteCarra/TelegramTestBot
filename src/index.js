@@ -143,14 +143,15 @@ const handleOrarioSetup = (classe, event, setup) => {
   }
 }
 
-const handleSchoolSetup = (classe, event, setup) => {
+const handleSchoolSetup = (classe, message, setup) => {
   const { Item: { parameters, passaggio } } = setup;
   console.log("passaggio: "+ passaggio.N)
+  console.log(message)
   switch (passaggio.N) {
     case "0":
-      return updateSetup(classe, { tipo: convertClassTypeToInt(event)})
+      return updateSetup(classe, { tipo: convertClassTypeToInt(message)})
     case "1":
-      return updateSetup(classe, { anno: parseInt(event.charAt(event.length - 1), 10)})
+      return updateSetup(classe, { anno: parseInt(message.charAt(message.length - 1), 10)})
     case "2":
       return createClasse(classe, parameters.anno, 'TODO', parameters.tipo)
   }
