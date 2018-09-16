@@ -11,9 +11,9 @@ module.exports = (dynamodb) => {
     console.log('---------------------')
     console.log(classe)
     console.log(user_id)
-    console.log(user_id)
     console.log(tipo)
     console.log(parameters)
+    console.log(passaggio)
     console.log('---------------------')
 
     return dynamodb.putItem({
