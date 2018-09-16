@@ -53,7 +53,7 @@ app.post('/', function (req, res) {
     }
   } else if(callback_query) {
     handleCallbackQuery(callback_query)
-    sendMessage(callback_query.chat.id, "Hey, nice pick!")
+    sendMessage(callback_query.message.chat.id, "Hey, nice pick!")
   } else {
     console.log(req.body)
   }
