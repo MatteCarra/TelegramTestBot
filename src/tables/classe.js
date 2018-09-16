@@ -2,6 +2,12 @@ module.exports = (dynamodb) => {
   const e = {};
 
   const createClasse = e.createClasse = (group_id, anno, sezione, tipo) => {
+    console.log("Creating classe")
+    console.log(group_id)
+    console.log(anno)
+    console.log(sezione)
+    console.log(tipo)
+    console.log('-------------')
     return dynamodb.putItem({
       TableName: "classe",
       ReturnConsumedCapacity: "NONE",
