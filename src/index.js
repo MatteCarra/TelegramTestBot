@@ -149,9 +149,9 @@ const handleSchoolSetup = (classe, message, setup) => {
   console.log(message)
   switch (passaggio.N) {
     case "0":
-      return updateSetup(classe, { tipo: convertClassTypeToInt(message)})
+      return updateSetup(classe, { tipo: { N: convertClassTypeToInt(message).toString() } })
     case "1":
-      return updateSetup(classe, { anno: parseInt(message.charAt(message.length - 1), 10)})
+      return updateSetup(classe, { anno: { N: parseInt(message.charAt(message.length - 1), 10).toString() } })
     case "2":
       return createClasse(classe, parameters.anno, message, parameters.tipo)
   }
