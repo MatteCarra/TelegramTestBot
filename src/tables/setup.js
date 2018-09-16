@@ -8,6 +8,14 @@ module.exports = (dynamodb) => {
   //3 = orario
   //4 = interrogazione
   const initSetup = e.initSetup = (classe, user_id, tipo, parameters, passaggio = 0) => {
+    console.log('---------------------')
+    console.log(classe)
+    console.log(user_id)
+    console.log(user_id)
+    console.log(tipo)
+    console.log(parameters)
+    console.log('---------------------')
+
     return dynamodb.putItem({
       TableName: "setup",
       ReturnConsumedCapacity: "NONE",
@@ -35,6 +43,7 @@ module.exports = (dynamodb) => {
     return getSetup(classe)
       .then(({ Item }) => {
         const { tipo, user_id, parameters, passaggio } = Item;
+        console.log({ ...parametersNew, ...parameters.M })
         return initSetup(classe, user_id, tipo.N, { ...parametersNew, ...parameters.M }, passaggio.N+1)
       })
   }
