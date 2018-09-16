@@ -44,7 +44,7 @@ module.exports = (dynamodb) => {
       .then(({ Item }) => {
         const { tipo, user_id, parameters, passaggio } = Item;
         console.log({ ...parametersNew, ...parameters.M })
-        return initSetup(classe, user_id.N, tipo.N, { ...parametersNew, ...parameters.M }, passaggio.N+1)
+        return initSetup(classe, user_id.N, tipo.N, { ...parametersNew, ...parameters.M }, parseInt(passaggio.N, 10) + 1)
       })
   }
 
