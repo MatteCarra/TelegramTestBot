@@ -53,7 +53,7 @@ app.post('/', function (req, res) {
     }
   } else if(callback_query) {
     handleCallbackQuery(callback_query)
-    sendMessage(message.chat.id, "Hey, nice pick!")
+    sendMessage(callback_query.chat.id, "Hey, nice pick!")
   } else {
     console.log(req.body)
   }
@@ -105,7 +105,8 @@ const pickClassYear = (chat_id, options = 5) =>
 
 const handleSetup = (classe, user_id, message, setup) => {
   if(user_id !== setup.user_id) {
-    return sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")
+    console.log(`${user_id} != ${setup.user_id}`)
+    return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
   }
 
   switch (setup.tipo.N) {
