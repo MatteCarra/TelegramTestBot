@@ -80,6 +80,7 @@ const handleCallbackQuery = ({from, message, data}) => {
       getSetup(id)
         .then(setup => handleSetup(id, from.id, data, setup))
         .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
+        .catch(() => {})
       break;
   }
 }
@@ -105,7 +106,7 @@ const pickClassYear = (chat_id, options = 5) =>
 
 const handleSetup = (classe, user_id, message, setup) => {
   if(user_id !== setup.user_id) {
-    console.log(`${user_id} != ${setup.user_id}`)
+    console.log(`${user_id} != ${setup}`)
     return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
   }
 
