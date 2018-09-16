@@ -104,13 +104,13 @@ const pickClassYear = (chat_id, options = 5) =>
     { reply_markup: { inline_keyboard: fillYearsArray(options)}}
   )
 
-const handleSetup = (classe, user_id, message, setup) => {
-  if(user_id.toString() !== setup.Item.user_id.N) {
-    console.log(`${user_id} != ${JSON.stringify(setup.Item.user_id.N)}`)
+const handleSetup = (classe, user, message, setup) => {
+  const { Item: { user_id, tipo } }
+  if(user.toString() !== user_id.N) {
     return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
   }
 
-  switch (setup.tipo.N) {
+  switch (tipo.N) {
     case "0": //classe
       handleSchoolSetup(classe, message, setup)
       break;
