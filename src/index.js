@@ -153,7 +153,7 @@ const handleSchoolSetup = (classe, message, setup) => {
     case "1":
       return updateSetup(classe, { anno: parseInt(message.charAt(message.length - 1), 10)})
     case "2":
-      return createClasse(classe, parameters.anno, 'TODO', parameters.tipo)
+      return createClasse(classe, parameters.anno, message, parameters.tipo)
   }
 }
 
