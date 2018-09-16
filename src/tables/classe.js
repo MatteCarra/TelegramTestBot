@@ -27,7 +27,7 @@ module.exports = (dynamodb) => {
       TableName: "classe",
       Key: {
         "id": {
-          N: id
+          N: id.toString()
         }
       }
     }).promise()
