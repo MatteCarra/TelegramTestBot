@@ -105,8 +105,8 @@ const pickClassYear = (chat_id, options = 5) =>
   )
 
 const handleSetup = (classe, user_id, message, setup) => {
-  if(user_id !== setup.user_id) {
-    console.log(`${user_id} != ${JSON.stringify(setup)}`)
+  if(user_id !== setup.Item.user_id.N) {
+    console.log(`${user_id} != ${JSON.stringify(setup.Item.user_id.N)}`)
     return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
   }
 
@@ -144,7 +144,7 @@ const handleOrarioSetup = (classe, event, setup) => {
 }
 
 const handleSchoolSetup = (classe, event, setup) => {
-  const { parameters, passaggio } = setup;
+  const { Item: { parameters, passaggio } } = setup;
   console.log("passaggio: "+ passaggio.N)
   switch (passaggio.N) {
     case "0":
