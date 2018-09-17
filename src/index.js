@@ -69,7 +69,7 @@ app.post('/', function (req, res) {
       } else { //group
         handleSetup(chat.id, from, message)
           .catch((err) => {
-            console.log(err)
+
           })
       }
     } else {
@@ -201,8 +201,9 @@ const handleSchoolSetup = (classe, message, setup, user) => {
       console.log(message)
       console.log(parameters)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
-        return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N).then(() => deleteSetup(classe))
-          .sendMessage(id, 'Creazione completata!', menu)
+        return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
+          .then(() => deleteSetup(classe))
+          .then(() => sendMessage(id, 'Creazione completata!', menu))
       }
     default:
       return Promise.reject()
