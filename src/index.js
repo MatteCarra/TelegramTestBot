@@ -11,6 +11,25 @@ const bodyParser = require('body-parser');
 // respond with "hello world" when a GET request is made to the homepage
 app.use(bodyParser.json())
 
+const commandOrario = "🗓 ORARIO 🗓";
+const commandCalendario = "📆 CALENDARIO 📆";
+const commandInterrogazioni = "❓ INTERROGAZIONI PROGRAMMATE ❓";
+
+const menu = {
+  reply_markup: {
+    keyboard: [
+      [
+        { text: commandOrario }
+      ],
+      [
+        { text: commandCalendario }
+      ],
+      [
+        { text: commandInterrogazioni }
+      ]
+    ]
+  }
+}
 
 
 const keyboard = [
@@ -103,6 +122,21 @@ const pickClassYear = (chat_id, options = 5) =>
     { reply_markup: { inline_keyboard: fillYearsArray(options)}}
   )
 
+const handleCommands = (classe, user, message) => {
+  switch (message.text) {
+    case commandOrario:
+
+      break
+    case commandCalendario:
+
+      break;
+    case commandInterrogazioni;
+
+      break;
+
+  }
+}
+
 const handleSetup = (classe, user, message) => {
   return getSetup(classe)
     .then(setup => {
@@ -119,17 +153,17 @@ const handleSetup = (classe, user, message) => {
 
       switch (tipo.N) {
         case "0": //classe
-          handleSchoolSetup(classe, message, setup)
-          break;
+          return handleSchoolSetup(classe, message, setup)
         case "1": //calendario
 
           break;
         case "2": //orario
-          handleOrarioSetup(classe, message, setup)
-          break;
+          return handleOrarioSetup(classe, message, setup)
         case "3": //interrogazione
 
           break;
+        default:
+          return Promise.reject()
       }
     })
 }
@@ -138,17 +172,17 @@ const handleOrarioSetup = (classe, event, setup) => {
   const { Item: { parameters, passaggio } } = setup
   switch (passaggio) {
     case "0": //viene mandato il giorno
-      updateSetup(classe. null, { "giorno" : { N: event.text } })
-      break;
+      return updateSetup(classe. null, { "giorno" : { N: event.text } })
     case "1": //ora
       createOrario(classe, key2.M.ora.S, event.text)
-      updateSetup(classe, null, { "giorno-ora" : { S: `${parameters.giorno.N}-${event.text}` } })
-      break;
+      return updateSetup(classe, null, { "giorno-ora" : { S: `${parameters.giorno.N}-${event.text}` } })
     case "2":
-      updateOrario(classe, null, null, event.text)
+      return updateOrario(classe, null, null, event.text)
       //TODO elimina
-      break;
+    default:
+      return Promise.reject();
   }
+
 }
 
 const handleSchoolSetup = (classe, message, setup) => {
@@ -168,7 +202,10 @@ const handleSchoolSetup = (classe, message, setup) => {
       console.log(parameters)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
         return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N).then(() => deleteSetup(classe))
+          .sendMessage(id, 'Creazione completata!', menu)
       }
+    default:
+      return Promise.reject()
   }
 }
 
