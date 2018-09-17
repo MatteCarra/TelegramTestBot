@@ -106,10 +106,15 @@ const pickClassYear = (chat_id, options = 5) =>
 const handleSetup = (classe, user, message) => {
   return getSetup(classe)
     .then(setup => {
+      if(!setup.Item) {
+        return Promise.reject()
+      }
+
       console.log(setup)
+
       const { Item: { user_id, tipo } } = setup
       if(user.toString() !== user_id.N) {
-        return Promise.reject(/*sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")*/)
+        return;
       }
 
       switch (tipo.N) {
