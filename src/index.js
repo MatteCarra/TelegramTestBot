@@ -67,7 +67,7 @@ app.post('/', function (req, res) {
       if(chat.id === from.id) { //private chat
         //Todo I've to get if this user is part of a classe. If he is I'm getting his class and showing
       } else { //group
-        handleSetup(chat.id, from.id, message)
+        handleSetup(chat.id, from, message)
           .catch((err) => {
             console.log(err)
           })
