@@ -8,14 +8,6 @@ module.exports = (dynamodb) => {
   //3 = orario
   //4 = interrogazione
   const initSetup = e.initSetup = (classe, user_id, tipo, parameters, passaggio = 0) => {
-    console.log('---------------------')
-    console.log(classe)
-    console.log(user_id)
-    console.log(tipo)
-    console.log(parameters)
-    console.log(passaggio)
-    console.log('---------------------')
-
     return dynamodb.putItem({
       TableName: "setup",
       ReturnConsumedCapacity: "NONE",
@@ -57,6 +49,17 @@ module.exports = (dynamodb) => {
         }
       }
     }).promise()
+  }
+
+  const deleteSetup = e.deleteSetup = (classe) => {
+    return dynamodb.deleteItem({
+      TableName: "setup",
+      Key: {
+        "classe": {
+          N: classe.toString()
+        }
+      }
+    })
   }
 
   return e;

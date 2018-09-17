@@ -4,7 +4,7 @@ const { aws, telegram: { id: myId } } = require('../credentials.json');
 const dynamodb = new AWS.DynamoDB(aws);
 const app = express();
 const { sendMessage } = require("./TelegramApi.js");
-const { getSetup, initSetup, updateSetup } = require('./tables/setup.js')(dynamodb);
+const { getSetup, initSetup, updateSetup, deleteSetup } = require('./tables/setup.js')(dynamodb);
 const { createClasse } = require('./tables/classe.js')(dynamodb);
 const bodyParser = require('body-parser');
 
@@ -48,8 +48,10 @@ app.post('/', function (req, res) {
       if(chat.id === from.id) { //private chat
         //Todo I've to get if this user is part of a classe. If he is I'm getting his class and showing
       } else { //group
-        getSetup(chat.id)
-          .then(setup => handleSetup(chat.id, from.id, message, setup))
+        handleSetup(chat.id, from.id, message, setup)
+          .catch((err) => {
+            console.log(err)
+          })
       }
     } else {
       console.log(req.body)
@@ -70,20 +72,14 @@ const handleCallbackQuery = ({from, message, data}) => {
     case "elementari":
     case "medie":
     case "superiori":
-      getSetup(id)
-        .then(setup => handleSetup(id, from.id, data, setup))
-        .then(() => pickClassYear(id, data === "medie" ? 3 : 5))
+      handleSetup(id, from.id, data)
       break;
     case "classe_anno_1":
     case "classe_anno_2":
     case "classe_anno_3":
     case "classe_anno_4":
     case "classe_anno_5":
-      getSetup(id)
-        .then(setup => handleSetup(id, from.id, data, setup))
-        .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
-        .then((res) => updateSetup(id, { message_id: { N: `${res.result.message_id}` }}))
-        .catch(() => {})
+      handleSetup(id, from.id, data)
       break;
   }
 }
@@ -107,26 +103,30 @@ const pickClassYear = (chat_id, options = 5) =>
     { reply_markup: { inline_keyboard: fillYearsArray(options)}}
   )
 
-const handleSetup = (classe, user, message, setup) => {
-  const { Item: { user_id, tipo } } = setup
-  if(user.toString() !== user_id.N) {
-    return Promise.reject(/*sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")*/)
-  }
+const handleSetup = (classe, user, message) => {
+  return getSetup(classe)
+    .then(setup => {
+      console.log(setup)
+      const { Item: { user_id, tipo } } = setup
+      if(user.toString() !== user_id.N) {
+        return Promise.reject(/*sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")*/)
+      }
 
-  switch (tipo.N) {
-    case "0": //classe
-      handleSchoolSetup(classe, message, setup)
-      break;
-    case "1": //calendario
+      switch (tipo.N) {
+        case "0": //classe
+          handleSchoolSetup(classe, message, setup)
+          break;
+        case "1": //calendario
 
-      break;
-    case "2": //orario
-      handleOrarioSetup(classe, message, setup)
-      break;
-    case "3": //interrogazione
+          break;
+        case "2": //orario
+          handleOrarioSetup(classe, message, setup)
+          break;
+        case "3": //interrogazione
 
-      break;
-  }
+          break;
+      }
+    })
 }
 
 const handleOrarioSetup = (classe, event, setup) => {
@@ -153,13 +153,16 @@ const handleSchoolSetup = (classe, message, setup) => {
   switch (passaggio.N) {
     case "0":
       return updateSetup(classe, { tipo: { N: convertClassTypeToInt(message).toString() } })
+        .then(() => pickClassYear(id, data === "medie" ? 3 : 5))
     case "1":
       return updateSetup(classe, { anno: { N: parseInt(message.charAt(message.length - 1), 10).toString() } })
+        .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
+        .then((res) => updateSetup(id, { message_id: { N: `${res.result.message_id}` }}))
     case "3":
       console.log(message)
       console.log(parameters)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
-        return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
+        return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N).then(() => deleteSetup(classe))
       }
   }
 }
