@@ -11,6 +11,8 @@ const bodyParser = require('body-parser');
 // respond with "hello world" when a GET request is made to the homepage
 app.use(bodyParser.json())
 
+
+
 const keyboard = [
   [
     { text: 'Q' }, { text: 'W' }, { text: 'E' }, { text: 'R' }, { text: 'T' }, { text: 'Y' }, { text: 'U' }, { text: 'I' }, { text: 'O' }, { text: 'P' }
@@ -46,14 +48,14 @@ app.post('/', function (req, res) {
       if(chat.id === from.id) { //private chat
         //Todo I've to get if this user is part of a classe. If he is I'm getting his class and showing
       } else { //group
-
+        getSetup(chat.id)
+          .then(setup => handleSetup(chat.id, from.id, message, setup))
       }
     } else {
       console.log(req.body)
     }
   } else if(callback_query) {
     handleCallbackQuery(callback_query)
-    sendMessage(callback_query.message.chat.id, "Hey, nice pick!")
   } else {
     console.log(req.body)
   }
@@ -80,6 +82,7 @@ const handleCallbackQuery = ({from, message, data}) => {
       getSetup(id)
         .then(setup => handleSetup(id, from.id, data, setup))
         .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
+        .then((res) => updateSetup(id, { message_id: { N: `${res.result.message_id}` }}))
         .catch(() => {})
       break;
   }
@@ -107,7 +110,7 @@ const pickClassYear = (chat_id, options = 5) =>
 const handleSetup = (classe, user, message, setup) => {
   const { Item: { user_id, tipo } } = setup
   if(user.toString() !== user_id.N) {
-    return Promise.reject(sendMessage(classe, "Solo chi ha iniziato il setup può rispondere"))
+    return Promise.reject(/*sendMessage(classe, "Solo chi ha iniziato il setup può rispondere")*/)
   }
 
   switch (tipo.N) {
@@ -152,8 +155,12 @@ const handleSchoolSetup = (classe, message, setup) => {
       return updateSetup(classe, { tipo: { N: convertClassTypeToInt(message).toString() } })
     case "1":
       return updateSetup(classe, { anno: { N: parseInt(message.charAt(message.length - 1), 10).toString() } })
-    case "2":
-      return createClasse(classe, parameters.anno, message, parameters.tipo)
+    case "3":
+      console.log(message)
+      console.log(parameters)
+      if(message.reply_to_message.message_id.toString() === parameters.message_id.N) {
+        return createClasse(classe, parameters.anno, message.text, parameters.tipo)
+      }
   }
 }
 

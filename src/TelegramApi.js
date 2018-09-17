@@ -13,7 +13,7 @@ const callTelegramApi = (method, body) => {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
-  });
+  }).then(res => res.json());
 };
 
 const getUrl = e.getUrl = method => `https://api.telegram.org/bot${token}/${method}`;
