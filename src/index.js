@@ -91,14 +91,14 @@ const handleCallbackQuery = ({from, message, data}) => {
     case "elementari":
     case "medie":
     case "superiori":
-      handleSetup(id, from.id, data)
+      handleSetup(id, from, data)
       break;
     case "classe_anno_1":
     case "classe_anno_2":
     case "classe_anno_3":
     case "classe_anno_4":
     case "classe_anno_5":
-      handleSetup(id, from.id, data)
+      handleSetup(id, from, data)
       break;
   }
 }
@@ -144,16 +144,15 @@ const handleSetup = (classe, user, message) => {
         return Promise.reject()
       }
 
-      console.log(setup)
+      const { Item: { user_id, tipo } } = setup;
 
-      const { Item: { user_id, tipo } } = setup
-      if(user.toString() !== user_id.N) {
+      if(user.id.toString() !== user_id.N) {
         return;
       }
 
       switch (tipo.N) {
         case "0": //classe
-          return handleSchoolSetup(classe, message, setup)
+          return handleSchoolSetup(classe, message, setup, user)
         case "1": //calendario
 
           break;
@@ -185,17 +184,17 @@ const handleOrarioSetup = (classe, event, setup) => {
 
 }
 
-const handleSchoolSetup = (classe, message, setup) => {
+const handleSchoolSetup = (classe, message, setup, user) => {
   const { Item: { parameters, passaggio } } = setup;
   console.log("passaggio: "+ passaggio.N)
   console.log(message)
   switch (passaggio.N) {
     case "0":
       return updateSetup(classe, { tipo: { N: convertClassTypeToInt(message).toString() } })
-        .then(() => pickClassYear(classe, data === "medie" ? 3 : 5))
+        .then(() => pickClassYear(classe, message === "medie" ? 3 : 5))
     case "1":
       return updateSetup(classe, { anno: { N: parseInt(message.charAt(message.length - 1), 10).toString() } })
-        .then(() => sendMessage(classe, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
+        .then(() => sendMessage(classe, `@${user.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
         .then((res) => updateSetup(classe, { message_id: { N: `${res.result.message_id}` }}))
     case "3":
       console.log(message)
