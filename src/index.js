@@ -5,7 +5,7 @@ const dynamodb = new AWS.DynamoDB(aws);
 const app = express();
 const { sendMessage } = require("./TelegramApi.js");
 const { getSetup, initSetup, updateSetup } = require('./tables/setup.js')(dynamodb);
-const { createClasse } = require('./tables/classe.js')
+const { createClasse } = require('./tables/classe.js')(dynamodb);
 const bodyParser = require('body-parser');
 
 // respond with "hello world" when a GET request is made to the homepage
