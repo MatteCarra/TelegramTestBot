@@ -198,16 +198,16 @@ const handleSchoolSetup = (classe, message, setup, user) => {
         .then(() => sendMessage(classe, `@${user.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
         .then((res) => updateSetup(classe, { message_id: { N: `${res.result.message_id}` }}))
     case "3":
-      console.log(message.reply_to_message.message_id.toString() === parameters.M.message_id.N))
+      console.log(message.reply_to_message.message_id.toString() === parameters.M.message_id.N);
       console.log(message.reply_to_message.message_id.toString())
       console.log(parameters.M.message_id.N)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
         return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
           .then(() => deleteSetup(classe))
-          .then(() => sendMessage(id, 'Creazione completata!', menu))
+          .then(() => sendMessage(id, 'Creazione completata!', menu));
       }
     default:
-      return Promise.reject()
+      return Promise.reject();
   }
 }
 

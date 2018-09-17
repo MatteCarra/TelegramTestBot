@@ -59,7 +59,7 @@ module.exports = (dynamodb) => {
           N: classe.toString()
         }
       }
-    })
+    }).promise()
   }
 
   return e;
