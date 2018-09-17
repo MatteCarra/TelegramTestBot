@@ -159,7 +159,7 @@ const handleSchoolSetup = (classe, message, setup) => {
       console.log(message)
       console.log(parameters)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
-        return createClasse(classe, parameters.anno, message.text, parameters.tipo)
+        return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
       }
   }
 }
