@@ -130,7 +130,7 @@ const handleCommands = (classe, user, message) => {
     case commandCalendario:
 
       break;
-    case commandInterrogazioni;
+    case commandInterrogazioni:
 
       break;
 
