@@ -192,11 +192,11 @@ const handleSchoolSetup = (classe, message, setup) => {
   switch (passaggio.N) {
     case "0":
       return updateSetup(classe, { tipo: { N: convertClassTypeToInt(message).toString() } })
-        .then(() => pickClassYear(id, data === "medie" ? 3 : 5))
+        .then(() => pickClassYear(classe, data === "medie" ? 3 : 5))
     case "1":
       return updateSetup(classe, { anno: { N: parseInt(message.charAt(message.length - 1), 10).toString() } })
-        .then(() => sendMessage(id, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
-        .then((res) => updateSetup(id, { message_id: { N: `${res.result.message_id}` }}))
+        .then(() => sendMessage(classe, `@${from.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
+        .then((res) => updateSetup(classe, { message_id: { N: `${res.result.message_id}` }}))
     case "3":
       console.log(message)
       console.log(parameters)
