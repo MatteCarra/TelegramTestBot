@@ -146,6 +146,7 @@ const handleSetup = (classe, user, message) => {
 
       const { Item: { user_id, tipo } } = setup;
 
+      console.log(user)
       if(user.id.toString() !== user_id.N) {
         return;
       }
