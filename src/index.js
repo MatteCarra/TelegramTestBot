@@ -143,6 +143,10 @@ const handleCallbackQuery = ({from, message, data}) => {
               }))
           }
         })
+        .catch(err => {
+          console.log(err)
+          console.log('wtf')
+        })
     case "orario_edit_giorno_0":
     case "orario_edit_giorno_1":
     case "orario_edit_giorno_2":
