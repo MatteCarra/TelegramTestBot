@@ -37,7 +37,9 @@ const menuOrario = {
     inline_keyboard: [
       [
         { text: "Visualizza", "callback_data": "orario_view"},
-        { text: "Modifica", "callback_data": "orario_edit"},
+      ],
+      [
+        { text: "Modifica", "callback_data": "orario_edit"}
       ]
     ]
   }
@@ -117,7 +119,7 @@ const handleCallbackQuery = ({from, message, data}) => {
       //TODO
       break;
     case "orario_edit":
-      getOrario(id)
+      return getOrario(id)
         .then(({ Item }) => {
           if(Item) {
 
@@ -212,12 +214,13 @@ const handleSetup = (classe, user, message) => {
 
           break;
         case "2": //orario
-          return handleOrarioSetup(classe, message, setup, user)
+          //TODO ?
+          return handleOrarioSetupEdit(classe, message, setup, user)
         case "3": //interrogazione
 
           break;
         case "4": //orario edit
-          return handleOrarioSetup(classe, message, setup)
+          return handleOrarioSetupEdit(classe, message, setup)
         default:
           return Promise.reject()
       }
@@ -301,10 +304,10 @@ const handleMessage = ({ text, chat, from }) => {
 
       break;
     case commandMenuInterrogazioni:
-      
+
       break;
     case commandMenuOrario:
-      sendMessage(chat.id, null, menuOrario)
+      sendMessage(chat.id, "Che operazione vuoi eseguire?", menuOrario)
       break;
   }
 }

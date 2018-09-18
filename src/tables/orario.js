@@ -35,7 +35,7 @@ module.exports = (dynamodb) => {
 
   const getOrario = e.getOrario = (classe) => {
     return dynamodb.getItem({
-      TableName: "classe",
+      TableName: "orario",
       Key: {
         "id": {
           N: classe.toString()

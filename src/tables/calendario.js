@@ -1,4 +1,4 @@
-module.exports = = (dynamoDb) => {
+module.exports = = (dynamodb) => {
   const e = {};
 
   const addElementToCalendario = e.addElementToCalendario = (group_id, date, message, type) => {
