@@ -6,30 +6,43 @@ const app = express();
 const { sendMessage } = require("./TelegramApi.js");
 const { getSetup, initSetup, updateSetup, deleteSetup } = require('./tables/setup.js')(dynamodb);
 const { createClasse } = require('./tables/classe.js')(dynamodb);
+const { getOrario, createOrario } = require('./tables/orario.js')(dynamodb);
 const bodyParser = require('body-parser');
 
 // respond with "hello world" when a GET request is made to the homepage
 app.use(bodyParser.json())
 
-const commandOrario = "🗓 ORARIO 🗓";
-const commandCalendario = "📆 CALENDARIO 📆";
-const commandInterrogazioni = "❓ INTERROGAZIONI PROGRAMMATE ❓";
+const commandMenuOrario = "🗓 ORARIO 🗓";
+const commandMenuCalendario = "📆 CALENDARIO 📆";
+const commandMenuInterrogazioni = "❓ INTERROGAZIONI PROGRAMMATE ❓";
 
 const menu = {
   reply_markup: {
     keyboard: [
       [
-        { text: commandOrario }
+        { text: commandMenuOrario }
       ],
       [
-        { text: commandCalendario }
+        { text: commandMenuCalendario }
       ],
       [
-        { text: commandInterrogazioni }
+        { text: commandMenuInterrogazioni }
       ]
     ]
   }
 }
+
+const menuOrario = {
+  reply_markup: {
+    inline_keyboard: [
+      [
+        { text: "Visualizza", "callback_data": "orario_view"},
+        { text: "Modifica", "callback_data": "orario_edit"},
+      ]
+    ]
+  }
+}
+
 
 
 const keyboard = [
@@ -100,6 +113,49 @@ const handleCallbackQuery = ({from, message, data}) => {
     case "classe_anno_5":
       handleSetup(id, from, data)
       break;
+    case "orario_view":
+      //TODO
+      break;
+    case "orario_edit":
+      getOrario(id)
+        .then(({ Item }) => {
+          if(Item) {
+
+          } else {
+            return initSetup(id, from.id, 5)
+              .then(() => sendMessage(id, "Che giorno vuoi modificare?", {
+                reply_markup: {
+                  inline_keyboard: [
+                    [
+                      { text: "Lunedì", "callback_data": "orario_edit_giorno_0"},
+                      { text: "Martedì", "callback_data": "orario_edit_giorno_1"},
+                      { text: "Mercoledì", "callback_data": "orario_edit_giorno_2"}
+                    ],
+                    [
+                      { text: "Giovedì", "callback_data": "orario_edit_giorno_3"},
+                      { text: "Venerdì", "callback_data": "orario_edit_giorno_4"},
+                      { text: "Sabato", "callback_data": "orario_edit_giorno_5"}
+                    ]
+                  ]
+                }
+              }))
+          }
+        })
+    case "orario_edit_giorno_0":
+    case "orario_edit_giorno_1":
+    case "orario_edit_giorno_2":
+    case "orario_edit_giorno_3":
+    case "orario_edit_giorno_4":
+    case "orario_edit_giorno_5":
+      return handleSetup(id, from, data.substring(data.length-2));
+    case "orario_edit_ora_1":
+    case "orario_edit_ora_2":
+    case "orario_edit_ora_3":
+    case "orario_edit_ora_4":
+    case "orario_edit_ora_5":
+    case "orario_edit_ora_6":
+    case "orario_edit_ora_7":
+      return handleSetup(id, from, data.substring(data.length-2));
   }
 }
 
@@ -158,27 +214,51 @@ const handleSetup = (classe, user, message) => {
 
           break;
         case "2": //orario
-          return handleOrarioSetup(classe, message, setup)
+          return handleOrarioSetup(classe, message, setup, user)
         case "3": //interrogazione
 
           break;
+        case "4": //orario edit
+          return handleOrarioSetup(classe, message, setup)
         default:
           return Promise.reject()
       }
     })
 }
 
-const handleOrarioSetup = (classe, event, setup) => {
+const handleOrarioSetupEdit = (classe, message, setup, user) => {
+  console.log(message)
   const { Item: { parameters, passaggio } } = setup
   switch (passaggio) {
     case "0": //viene mandato il giorno
-      return updateSetup(classe. null, { "giorno" : { N: event.text } })
+      return updateSetup(classe. null, { "giorno" : { N: message } })
+        .then(() =>
+          sendMessage(classe, "Che ora vuoi impostare?", {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "1°", "callback_data": "orario_edit_ora_1"},
+                  { text: "2°", "callback_data": "orario_edit_ora_2"},
+                  { text: "3°", "callback_data": "orario_edit_ora_3"},
+                  { text: "4°", "callback_data": "orario_edit_ora_4"},
+                ],
+                [
+                  { text: "5°", "callback_data": "orario_edit_ora_5"},
+                  { text: "6°", "callback_data": "orario_edit_ora_6"},
+                  { text: "7°", "callback_data": "orario_edit_ora_7"},
+                  { text: "8°", "callback_data": "orario_edit_ora_8"}
+                ]
+              ]
+            }
+          })
+        )
     case "1": //ora
-      createOrario(classe, key2.M.ora.S, event.text)
-      return updateSetup(classe, null, { "giorno-ora" : { S: `${parameters.giorno.N}-${event.text}` } })
-    case "2":
-      return updateOrario(classe, null, null, event.text)
-      //TODO elimina
+      return updateSetup(classe, null, { "ora" : { N: message } })
+        .then(() => sendMessage(classe, `@${user.username} Che materia hai alla ${message}° ora?`))
+    case "2": //materia
+      return createOrario(classe, parameters.M.giorno.N, parameters.M.ora.N, message.text)
+        .then(() => deleteSetup(classe))
+        .then(() => sendMessage(classe, "Impostazione orario completata con successo.", menuOrariog))
     default:
       return Promise.reject();
   }
@@ -204,7 +284,7 @@ const handleSchoolSetup = (classe, message, setup, user) => {
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
         return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
           .then(() => deleteSetup(classe))
-          .then(() => sendMessage(user.id, 'Creazione completata!', menu));
+          .then(() => sendMessage(classe, 'Creazione completata!', menu));
       }
     default:
       return Promise.reject();

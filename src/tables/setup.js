@@ -5,9 +5,10 @@ module.exports = (dynamodb) => {
   //Tipo:
   //0 = classe
   //1 = calendario
-  //3 = orario
-  //4 = interrogazione
-  const initSetup = e.initSetup = (classe, user_id, tipo, parameters, passaggio = 0) => {
+  //2 = orario new
+  //3 = interrogazione
+  //4 = orario edit
+  const initSetup = e.initSetup = (classe, user_id, tipo, parameters = {}, passaggio = 0) => {
     return dynamodb.putItem({
       TableName: "setup",
       ReturnConsumedCapacity: "NONE",
