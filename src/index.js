@@ -81,9 +81,9 @@ app.post('/', function (req, res) {
         //Todo I've to get if this user is part of a classe. If he is I'm getting his class and showing
       } else { //group
         handleSetup(chat.id, from, message)
-          .catch((err) => {
-
-          })
+          .catch(() =>
+            handleMessage(message)
+          )
       }
     } else {
       console.log(req.body)
@@ -199,10 +199,8 @@ const handleSetup = (classe, user, message) => {
       if(!setup.Item) {
         return Promise.reject()
       }
-
       const { Item: { user_id, tipo } } = setup;
 
-      console.log(user)
       if(user.id.toString() !== user_id.N) {
         return;
       }
@@ -278,9 +276,6 @@ const handleSchoolSetup = (classe, message, setup, user) => {
         .then(() => sendMessage(classe, `@${user.username} Che corso frequentate?`, { reply_markup: { keyboard, one_time_keyboard: true, selective: true } }))
         .then((res) => updateSetup(classe, { message_id: { N: `${res.result.message_id}` }}))
     case "3":
-      console.log(message.reply_to_message.message_id.toString() === parameters.M.message_id.N);
-      console.log(message.reply_to_message.message_id.toString())
-      console.log(parameters.M.message_id.N)
       if(message.reply_to_message.message_id.toString() === parameters.M.message_id.N) {
         return createClasse(classe, parameters.M.anno.N, message.text, parameters.M.tipo.N)
           .then(() => deleteSetup(classe))
