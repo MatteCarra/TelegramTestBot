@@ -296,7 +296,17 @@ const convertClassTypeToInt = (sType) => {
 
 
 const handleMessage = ({ text, chat, from }) => {
+  switch (text) {
+    case commandMenuCalendario:
 
+      break;
+    case commandMenuInterrogazioni:
+      
+      break;
+    case commandMenuOrario:
+      sendMessage(chat.id, null, menuOrario)
+      break;
+  }
 }
 
 app.listen(9000, () => console.log('Example app listening on port 9000!'))
